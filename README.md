@@ -21,7 +21,7 @@ These instructions assume you have already materialized an [experiment in Merge]
 Anytime you create a new XDC, follow these steps to configure it:
 1. SSH to your XDC
 2. `cd /usr/local`
-3. Run `sudo -E git clone git@github.com:sdelaughter/dos-mitigation.git` to clone this repository.  You'll need sudo to write in `/usr/local`, and the `-E` flag will preserve your environment variables with sudo (including SSH keys).
+3. Run `sudo -E git clone https://github.com/DespaZito/dos-mitigation.git` to clone this repository.  You'll need sudo to write in `/usr/local`, and the `-E` flag will preserve your environment variables with sudo (including SSH keys).
 4. `sudo chown -R $USER dos-mitigation`
 5. `sudo chgrp -R $USER dos-mitigation`
 6. `cd dos-mitigation`
