@@ -13,7 +13,7 @@ sudo make install
 
 cd
 rm -rf nginx-*
-wget http://hg.nginx.org/nginx/archive/tip.zip
+cp /usr/local/dos-mitigation/common/setup/tip.zip ./
 unzip tip.zip
 rm tip.zip
 cd nginx-*
