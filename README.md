@@ -124,6 +124,9 @@ Additionally, the `attackers_do_mitigation` parameter can be used to deploy the 
 
 Note that not all mitigations involve changes to client behavior, so there may not be anything for attackers to do.  For example, SYN Cookies and QUIC Retry are purely server-side.  In these cases, testing both options with `'attackers_do_mitigation': [0, 1]` will result in two separate but identical experiments.
 
+### CPU limits
+The `attacker_cpu_limit` and `clients_cpu_limit` can be set to values between 0 and 100. They correspond to the % of cpu that the client/attacker can use. Setting `attacker_cpu_limit` to 25 means that the attackers will use 25% of the available CPU resources. 
+
 ## Playbooks
 Most experiment automation is handled using Ansible playbooks.  The `play` script provides a simple wrapper around the `ansible-playbook` command that will pass in the `hosts` file as a device inventory (this `hosts` file is created by running `inventory_gen.sh` followed by `inventory_update.sh`).  Example usage:
 
