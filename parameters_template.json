@@ -16,6 +16,7 @@
   "bottleneck_capacity": [-1],
   "attacker_busywait": [0],
   "attacker_cpu_limit": [100],
+  "clients_cpu_limit": [100],
   "n_clients": [9],
   "n_attackers": [3],
   "syn_pow_verifier": ["s0"]

@@ -23,7 +23,7 @@
   gather_facts: no
   tasks:
   - name: start {{ client_app }} clients
-    shell: timeout {{ client_duration }} {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
+    shell: timeout {{ client_duration }} cpulimit -l {{ clients_cpu_limit }} -f -- {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
     async: "{{ client_duration }}"
     poll: 0
     register: client_async
@@ -92,7 +92,7 @@
   gather_facts: no
   tasks:
   - name: start {{ client_app }} clients
-    shell: timeout {{ client_duration }} {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
+    shell: timeout {{ client_duration }} cpulimit -l {{ clients_cpu_limit }} -f -- {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
     async: "{{ client_duration }}"
     poll: 0
     register: client_async
@@ -165,7 +165,7 @@
   gather_facts: no
   tasks:
   - name: start {{ client_app }} clients
-    shell: timeout {{ client_duration }} {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
+    shell: timeout {{ client_duration }} cpulimit -l {{ clients_cpu_limit }} -f -- {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
     async: "{{ client_duration }}"
     poll: 0
     register: client_async
@@ -234,7 +234,7 @@
   gather_facts: no
   tasks:
   - name: start {{ client_app }} clients
-    shell: timeout {{ client_duration }} {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
+    shell: timeout {{ client_duration }} cpulimit -l {{ clients_cpu_limit }} -f -- {{ user_dir }}/common/clients/{{ client_app }}.sh {{ server_name }} {{ client_interval }} {{ file_size }}
     async: "{{ client_duration }}"
     poll: 0
     register: client_async
