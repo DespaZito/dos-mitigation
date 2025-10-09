@@ -38,6 +38,62 @@
 # define NULL 0
 #endif
 
+//__________________________MAP_________________________
+
+#define MAX_SIZE                                           \
+    100 // Maximum number of elements in the map
+
+int size = 0; // Current number of elements in the map
+char keys[MAX_SIZE][100]; // Array to store the keys
+int values[MAX_SIZE]; // Array to store the values
+
+// Function to get the index of a key in the keys array
+int thresholdMap_getIndex(char key[])
+{
+    for (int i = 0; i < size; i++) {
+        if (strcmp(keys[i], key) == 0) {
+            return i;
+        }
+    }
+    return -1; // Key not found
+}
+
+// Function to insert a key-value pair into the map
+void thresholdMap_insert(char key[], int value)
+{
+    int index = getIndex(key);
+    if (index == -1) { // Key not found
+        strcpy(keys[size], key);
+        values[size] = value;
+        size++;
+    }
+    else { // Key found
+        values[index] = value;
+    }
+}
+
+// Function to get the value of a key in the map
+int thresholdMap_get(char key[])
+{
+    int index = getIndex(key);
+    if (index == -1) { // Key not found
+        return -1;
+    }
+    else { // Key found
+        return values[index];
+    }
+}
+
+// Function to print the map
+void thresholdMap_printMap()
+{
+    for (int i = 0; i < size; i++) {
+        printf("%s: %d\n", keys[i], values[i]);
+    }
+}
+
+//______________________________________________________
+
 // const unsigned long POW_THRESHOLD = 0; // k=1
 // const unsigned long POW_THRESHOLD  = 2147483648; // k=2
 // const unsigned long POW_THRESHOLD = 3221225472; // k=4
@@ -153,7 +209,20 @@ static __inline bool valid_syn_pow(struct iphdr* iph, struct tcphdr* tcph) {
 	digest.ack_seq = tcph->ack_seq;
 
 	unsigned long hash = syn_hash(&digest);
-	bool valid = (hash >= (unsigned long) POW_THRESHOLD);
+
+	// read table from file
+	// check for match on source address
+	// POW_THRESHOLD = get from file
+
+	client_pow_threshold = thresholdMap_get(digest.saddr.c_str());
+	if (client_pow_threshold == -1){
+		// the ip address is not in our table
+		// add entry with default threshold
+		thresholdMap_insert(digest.saddr.c_str(), DEFAULT_POW_THRESHOLD ); // TODO: this is a long and not char?
+		client_pow_threshold = DEFAULT_POW_THRESHOLD;
+	}
+
+	bool valid = (hash >= (unsigned long) client_pow_threshold);
 	return valid;
 }
 
@@ -173,7 +242,7 @@ static __inline unsigned short do_syn_pow(struct iphdr* iph, struct tcphdr* tcph
 	digest.dport = tcph->dest;
 	digest.seq = tcph->seq;
 
-	if (POW_THRESHOLD > 0) {
+	if (DEFAULT_POW_THRESHOLD > 0) {
 		#pragma unroll
 		for (unsigned short i=0; i<MAX_ITERS; i++) {
 			digest.ack_seq = __constant_htonl(nonce + i);
@@ -182,7 +251,7 @@ static __inline unsigned short do_syn_pow(struct iphdr* iph, struct tcphdr* tcph
 			if (hash > best_hash) {
 				best_nonce = nonce + i;
 				best_hash = hash;
-				if (best_hash >= POW_THRESHOLD) {
+				if (best_hash >= DEFAULT_POW_THRESHOLD) {
 					break;
 				}
 			}
