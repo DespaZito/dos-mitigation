@@ -16,10 +16,10 @@ For very quick analysis and debugging purposes, you can use [csv_to_tps.py](csv_
 
 *tested on Ubuntu 22.04*
 
-1. Run `sudo db_setup.sh` to install dependencies, start a Postgres database service, and delete the postgres user's password to simplify interaction with the database (if you're concerned with data security you will probably want to modify this setup procedure).
+1. Run `sudo ./db_setup.sh` to install dependencies, start a Postgres database service, and delete the postgres user's password to simplify interaction with the database (if you're concerned with data security you will probably want to modify this setup procedure).
 
 2. Run `sudo -u postgres createuser --interactive` and enter your username when prompted.  This will allow you to interact with the databse directly instead of switching to the postgres user account.
-3. Run `sudo -u postgres psql`, `CREATE DATABASE dos;`, `sudo -u postgres psql -d dos -f schema.sql` to create the dos database and populate it with needed rows.
+3. Run `sudo -u postgres psql`, `CREATE DATABASE dos;`, `\q`,  `sudo -u postgres psql -d dos -f schema.sql` to create the dos database and populate it with needed rows.
 
 4. `cd` into this analysis directory and run `python3 -m venv env` to create a python virtual environment in a new `env` directory (or simply `python -m venv env` if Python 3 is your system defualt).
 
