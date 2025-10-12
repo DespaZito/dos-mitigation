@@ -66,6 +66,14 @@ struct bpf_elf_map acc_map __section("maps") = {
         .max_elem       = 2,
 };
 
+struct bpf_elf_map threshold_map __section("maps") = {
+	.type           = BPF_MAP_TYPE_HASH,
+	.size_key       = sizeof(uint32_t),
+	.size_value     = sizeof(unsigned long),
+	.pinning        = PIN_GLOBAL_NS,
+    .max_elem       = 1024,
+};
+
 // enum Maps {DROP_MAP, PASS_MAP, ITERS_MAP};
 
 static __inline int account_data(uint32_t dir, int amt) {
@@ -153,7 +161,13 @@ static __inline bool valid_syn_pow(struct iphdr* iph, struct tcphdr* tcph) {
 	digest.ack_seq = tcph->ack_seq;
 
 	unsigned long hash = syn_hash(&digest);
-	bool valid = (hash >= (unsigned long) POW_THRESHOLD);
+
+	client_specific_threshold = map_lookup_elem(&threshold_map, &digest.saddr);
+	if (!client_specific_threshold){
+		client_specific_threshold = POW_THRESHOLD;
+	}
+
+	bool valid = (hash >= (unsigned long) client_specific_threshold);
 	return valid;
 }
 

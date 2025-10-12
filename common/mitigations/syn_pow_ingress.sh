@@ -9,6 +9,15 @@ else
     _devs=($3)
 fi
 
+ip="192.0.2.1"
+thr=123456
+# convert dotted IP to hex bytes (network order)
+ip_hex=$(printf '%02x%02x%02x%02x' $(echo $ip | tr '.' ' '))
+val_hex=$(printf '%08x' $thr)
+
+sudo bpftool map update pinned /sys/fs/bpf/threshold_map \
+  key 0x${ip_hex} value 0x${val_hex}
+
 for _dev in "${_devs[@]}"; do
   /usr/local/dos-mitigation/common/ebpf/bin/tc_clear $_dev
   if [[ $_toggle -eq 1 ]]; then
