@@ -20,16 +20,26 @@ For very quick analysis and debugging purposes, you can use [csv_to_tps.py](csv_
 
 2. Run `sudo -u postgres createuser --interactive` and enter your username when prompted.  This will allow you to interact with the databse directly instead of switching to the postgres user account.
 3. Run `sudo -u postgres psql`, `CREATE DATABASE dos;`, `\q`,  `sudo -u postgres psql -d dos -f schema.sql` to create the dos database and populate it with needed rows.
+4. To reset the database, Run `sudo -u postgres psql`, followed by
+```
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'dos'
+AND pid <> pg_backend_pid();
 
-4. `cd` into this analysis directory and run `python3 -m venv env` to create a python virtual environment in a new `env` directory (or simply `python -m venv env` if Python 3 is your system defualt).
+DROP DATABASE dos;
+CREATE DATABASE dos;
+```
 
-5. Run `source env/bin/activate` to activate the new environment.
+5. `cd` into this analysis directory and run `python3 -m venv env` to create a python virtual environment in a new `env` directory (or simply `python -m venv env` if Python 3 is your system defualt).
 
-6. Run `pip3 install seaborn psycopg2 jupyter` to install necessary python libraries.
+6. Run `source env/bin/activate` to activate the new environment.
 
-7. Move/copy your experiment data into the `data` directory (or specify an alternate path in the Jupyter notebooks).  If storing large amounts of data on an external volume, you can replace the data directory with a symlink to avoid copying/moving.  Within the `data` directory, create a folder named for your revision/materialization, and place your session directory inside that.  For example, the path should look like: `/usr/local/dos-mitigation/data/materialization_name/session_name/`.  The revision/materialization and session directory names will be used as nicknames in the database (this assumes a 1:1 correspondence between a revision and a materialization).  Within the session directory should be a hidden copy of the session's parameters (`.parameters.json`), as well as some number of timestamped directories, one per experiment.  Within each of those should be one directory per host, and so on following the structure that [run.py](../run.py) creates.  Note that results are typically only collected at client nodes, so while placeholder directories are created for all hosts the rest will likely be empty.
+7. Run `pip3 install seaborn psycopg2 jupyter` to install necessary python libraries.
 
-8. Import data with `import.ipynb` and analyze it with `plot.ipynb`.  Note that when using GUI elements to select materializations, sessions, etc. you should NOT re-run the cell after making your selection (doing so will revert the selection to its default value).  Simply click your selection (or command-click to select multiple options where applicable), and the value(s) you choose will be read by other cells later in the notebook.<br>In `plot.ipynb` you'll need to re-run the "Query Database" cell after changing your session/revision/materialization selections, and re-run the "Update and Apply Selections" cell after changing your "Map Parameters to Plot Features" or "Filter Data" selections.
+8. Move/copy your experiment data into the `data` directory (or specify an alternate path in the Jupyter notebooks).  If storing large amounts of data on an external volume, you can replace the data directory with a symlink to avoid copying/moving.  Within the `data` directory, create a folder named for your revision/materialization, and place your session directory inside that.  For example, the path should look like: `/usr/local/dos-mitigation/data/materialization_name/session_name/`.  The revision/materialization and session directory names will be used as nicknames in the database (this assumes a 1:1 correspondence between a revision and a materialization).  Within the session directory should be a hidden copy of the session's parameters (`.parameters.json`), as well as some number of timestamped directories, one per experiment.  Within each of those should be one directory per host, and so on following the structure that [run.py](../run.py) creates.  Note that results are typically only collected at client nodes, so while placeholder directories are created for all hosts the rest will likely be empty.
+
+9. Import data with `import.ipynb` and analyze it with `plot.ipynb`.  Note that when using GUI elements to select materializations, sessions, etc. you should NOT re-run the cell after making your selection (doing so will revert the selection to its default value).  Simply click your selection (or command-click to select multiple options where applicable), and the value(s) you choose will be read by other cells later in the notebook.<br>In `plot.ipynb` you'll need to re-run the "Query Database" cell after changing your session/revision/materialization selections, and re-run the "Update and Apply Selections" cell after changing your "Map Parameters to Plot Features" or "Filter Data" selections.
 
 ## Database Schema
 
