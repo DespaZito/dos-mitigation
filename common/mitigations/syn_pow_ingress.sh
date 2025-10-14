@@ -17,6 +17,9 @@ fi
 
 MAP_PATH="/sys/fs/bpf/tc/globals/threshold_map"
 
+# Remove any existing map (to clear old entries)
+sudo rm "$MAP_PATH"
+
 # Create the map if it doesnt exist
 if ! sudo bpftool map show pinned "$MAP_PATH" &>/dev/null; then
     sudo bpftool map create "$MAP_PATH" \
