@@ -1,5 +1,5 @@
 sudo apt update
-yes | sudo apt install git libpcre3 libpcre3-dev make python3-certbot-nginx snapd
+yes | sudo apt install git libpcre3 libpcre3-dev make python3-certbot-nginx snapd unzip
 yes | sudo apt purge nginx nginx-common nginx-core
 
 cd
