@@ -170,76 +170,8 @@ static __inline bool valid_syn_pow(struct iphdr* iph, struct tcphdr* tcph) {
 	digest.seq = tcph->seq;
 	digest.ack_seq = tcph->ack_seq;
 
-	// bpf_printk("Got a packet! digest.saddr=%lu, digest.daddr=%lu\n", bpf_ntohl(digest.saddr), bpf_ntohl(digest.daddr));
-	
-	bpf_printk("Got a packet!");
-	
-	// __u32 src = bpf_ntohl(digest.saddr);
-	// bpf_printk("src IP: %d.%d.\n",
-           //	(src >> 24) & 0xFF,
-           //	(src >> 16) & 0xFF);
-	
-	// bpf_printk("%d.%d\n",
-          //      (src  >> 8) & 0xFF,
-            //     src & 0xFF);
-	
-
-	// __u16 dport = bpf_ntohs(digest.dport);
-	// bpf_printk("digest.sport=%u, digest.dport=%u\n", bpf_ntohs(digest.sport), bpf_ntohs(digest.dport));
-
-	// bpf_printk("looking for %lu in the map\n", digest.saddr);
-	// uint32_t testData = 17;	
-	// uint32_t *client_specific_threshold_ptr;
-	// client_specific_threshold_ptr = map_lookup_elem(&threshold_map2, &testData);
-	// if (!client_specific_threshold_ptr){
-	//	bpf_printk("Could not find threshold for digest.saddr=%lu\n", digest.saddr);
-	//	uint32_t default_threshold = POW_THRESHOLD;
-	//	client_specific_threshold_ptr = &default_threshold;
-	//}
-	//
-	
-	//__u32 val = 167772673;  // 0x0A000201
-	//	__u32 val = 0x0102000a;
-	// __u32 val = bpf_htonl(0x0102000a);
-	// __u8 arr[4];
-
-	// int_to_bytes_custom(val, arr);	
-	// bpf_printk("arr is now: %d %d \n", arr[0], arr[1]);
-	// bpf_printk("%d %d \n", arr[2], arr[3]);
-
-	
-	// __u32 *value1;
-         // value1 = bpf_map_lookup_elem(&threshold_map, &val);
-         // if (value1) {
-                // Do something with *value
-          //       bpf_printk("Lookup success: value=%u\n", *value1);
-         // } else {
-            //    bpf_printk("Lookup failed: key=%x not found\n", val);
-         // }
-
-	// __u32 key = 42;
-    	// __u32 *value;
-
-   	// value = bpf_map_lookup_elem(&threshold_map, &key);
-     	//if (value) {
-        	// Do something with *value
-       	//	bpf_printk("Lookup success: value=%u\n", *value);
-   	// } else {
-        //	bpf_printk("Lookup failed: key=%u not found\n", key);
-   	//}
-	
-	   // Print src/dst as 32-bit host-order numbers
     __u32 saddr_host = bpf_ntohl(digest.saddr);
     __u32 daddr_host = bpf_ntohl(digest.daddr);
-    bpf_printk("pkt s=%u d=%u\n", saddr_host, daddr_host);
-
-    // If you really want dotted-quad, split into 2 printks (3 args each)
-    // bpf_printk("src %u.%u.\n",
-    //     (saddr_host >> 24) & 0xFF,
-    //     (saddr_host >> 16) & 0xFF);
-    // bpf_printk("%u.%u\n",
-    //     (saddr_host >> 8) & 0xFF,
-    //     saddr_host & 0xFF);
 
     // === Correct map lookup: host-order key (matches userspace inserts) ===
     __u32 *threshold =  bpf_map_lookup_elem(&threshold_map, &saddr_host);
@@ -247,9 +179,7 @@ static __inline bool valid_syn_pow(struct iphdr* iph, struct tcphdr* tcph) {
 
     if (threshold) {
         thr_value = *threshold;
-		bpf_printk("threshold hit key=%u val=%u\n", saddr_host, *threshold);
     } else {
-        bpf_printk("threshold miss key=%u\n", saddr_host);
 		thr_value = POW_THRESHOLD;
     }
 
